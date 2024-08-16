@@ -1,0 +1,146 @@
+# Constants for environment objects
+STENCH = 9
+GLITTER = 8
+PIT = 7
+GOLD = 6
+BREEZE = 5
+WUMPUS = -1
+
+def learnagent(world, i, j):
+    '''Function for an agent to know what position contains which environment objects'''
+    if world[i][j] == STENCH:
+        print(f"\nNow the agent is at {i},{j}")
+        print("You came across a stench")
+        return i, j
+    elif world[i][j] == GLITTER:
+        print(f"\nNow the agent is at {i},{j}")
+        print("You came across a glitter")
+        return i, j
+    elif world[i][j] == PIT:
+        print(f"\nNow the agent is at {i},{j}")
+        print("You came across a pit")
+        return -5, -5
+    elif world[i][j] == GOLD:
+        print(f"\nNow the agent is at {i},{j}")
+        print("You found gold")
+        return -4, -4
+    elif world[i][j] == BREEZE:
+        print(f"\nNow the agent is at {i},{j}")
+        print("You feel breeze")
+        return i, j
+    elif world[i][j] == WUMPUS:
+        print(f"\nNow the agent is at {i},{j}")
+        print("You met wumpus")
+        return -5, -5
+    else: # if world environment was empty
+        print(f"\nNow the agent is at {i},{j}")
+        return i, j
+
+def checkinp(agi, agj):
+    '''Function for checking input going in forward direction to get gold'''
+    possible_moves = []
+
+    if agi == 0:
+        if agj < 3:
+            possible_moves.append((agi, agj + 1))  # move right
+        if agi < 3:
+            possible_moves.append((agi + 1, agj))  # move down
+    elif agi == 3:
+        if agj < 3:
+            possible_moves.append((agi, agj + 1))  # move right
+        if agi > 0:
+            possible_moves.append((agi - 1, agj))  # move up
+    else:
+        if agj < 3:
+            possible_moves.append((agi, agj + 1))  # move right
+        if agj > 0:
+            possible_moves.append((agi, agj - 1))  # move left
+        if agi < 3:
+            possible_moves.append((agi + 1, agj))  # move down
+        if agi > 0:
+            possible_moves.append((agi - 1, agj))  # move up
+
+    print("You can go to: ", possible_moves)
+    agvi = int(input("\nEnter input for row => "))
+    agvj = int(input("Enter input for column => "))
+    
+    if (agvi, agvj) in possible_moves:
+        return agvi, agvj
+    else:
+        return -5, -5
+
+def checkinpreverse(agi, agj):
+    '''Function for checking input going in reverse direction to get back to original position'''
+    possible_moves = []
+
+    if agi == 0:
+        if agj > 0:
+            possible_moves.append((agi, agj - 1))  # move left
+    elif agi == 3:
+        if agj > 0:
+            possible_moves.append((agi, agj - 1))  # move left
+        if agi > 0:
+            possible_moves.append((agi - 1, agj))  # move up
+    else:
+        if agj > 0:
+            possible_moves.append((agi, agj - 1))  # move left
+        if agj < 3:
+            possible_moves.append((agi, agj + 1))  # move right
+        if agi > 0:
+            possible_moves.append((agi - 1, agj))  # move up
+
+    print("You can go to: ", possible_moves)
+    agvi = int(input("\nEnter input for row => "))
+    agvj = int(input("Enter input for column => "))
+    
+    if (agvi, agvj) in possible_moves:
+        return agvi, agvj
+    else:
+        return -5, -5
+
+world = [
+    [0, BREEZE, PIT, BREEZE],
+    [STENCH, GLITTER, BREEZE, 0],
+    [WUMPUS, GOLD, PIT, BREEZE],
+    [STENCH, GLITTER, BREEZE, PIT]
+]  # Declaration of a world
+
+agi, agj = 0, 0  # Initial agent position
+print(f"\n\n\nInitially agent is at {agi},{agj}")
+print(f"You can go to: {(agi + 1, agj)}")
+print(f"You can go to: {(agi, agj + 1)}")
+agvi = int(input("Enter input for row => "))
+agvj = int(input("Enter input for column => "))  # Taking row and column values
+
+if (agvi == 1 and agvj == 0) or (agvi == 0 and agvj == 1):
+    agi, agj = learnagent(world, agvi, agvj)  # If input valid calling learn agent function
+else:
+    print("Not valid")
+
+while agi >= 0:
+    agvi, agvj = checkinp(agi, agj)
+    if agvi != -5 and agvj != -5:
+        agi, agj = learnagent(world, agvi, agvj)
+    else:
+        print("\nNot valid")
+    
+    if agi == -5:
+        print("\nGame over! Sorry, try next time!!!")
+        break
+    elif agi == -4:
+        print("\nYou have unlocked the next level. Move back to your initial position.")
+        agi, agj = 2, 1  # Implementation of reverse logic
+        while agi >= 0:
+            agvi, agvj = checkinpreverse(agi, agj)
+            if agvi == 0 and agvj == 0:
+                agi, agj = -4, -4
+                break
+            elif agvi != -5 and agvj != -5:
+                agi, agj = learnagent(world, agvi, agvj)
+            else:
+                print("\nNot valid")
+
+        if agi == -5:
+            print("\nYou were really close, but unfortunately you failed!!! Try next time.")
+        else:
+            print("\nHurray! You won!!!!! Three cheers.")
