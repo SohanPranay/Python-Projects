@@ -1,0 +1,24 @@
+def vacuum_cleaner():
+  room = [[0, 1], [1, 0]]
+  print("Initial room state:")
+  for row in room:
+    print(row)
+  print()
+
+  room_cleaned = 0
+  for i in range(len(room)):
+    for j in range(len(room[i])):
+      if room[i][j] == 1:
+        print(f'Dirt detected in room ({i}, {j})')
+        room[i][j] = 0
+        room_cleaned += 1
+        print('Dirt has been cleaned.')
+      else:
+        print(f'No dirt in room ({i}, {j})')
+      print()
+  print("Final room state:")
+  for row in room:
+    print(row)
+print(f'Total rooms cleaned: {room_cleaned}')
+if __name__ == "__main__":
+  vacuum_cleaner()
